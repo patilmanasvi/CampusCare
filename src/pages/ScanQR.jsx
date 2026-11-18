@@ -50,7 +50,7 @@ export default function ScanQR() {
   };
 
   return ( <> 
-    <section className="p-4 max-w-2xl mx-auto">
+    <section className="p-4 max-w-2xl mx-auto text-gray-900 dark:text-white">
       <h2 className="text-2xl font-semibold mb-4">Scan PC QR Code</h2>
 
       {cameraError && <p className="text-red-600 mb-2">{cameraError}</p>}
@@ -72,7 +72,7 @@ export default function ScanQR() {
           placeholder="Enter QR token manually"
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          className="flex-1 rounded border p-2"
+          className="flex-1 rounded border p-2 border-gray-300 bg-white text-gray-900 placeholder-gray-400 dark:border-gray-600 dark:bg-dark-bg dark:text-white dark:placeholder-gray-500"
         />
         <button
           type="submit"
@@ -100,7 +100,7 @@ export default function ScanQR() {
     </section>
 
 {addedPcs.length > 0 && (
-  <div className="mt-8">
+  <div className="mt-8 text-gray-900 dark:text-white">
     <h3 className="font-medium text-lg mb-2">Added PCs</h3>
     {addedPcs.map((item, idx) => (
       <Card key={idx} className="mb-4">

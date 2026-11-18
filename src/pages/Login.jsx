@@ -45,7 +45,7 @@ export default function Login() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-bg p-2 focus:border-primary focus:ring-primary"
+            className="mt-1 block w-full rounded-md border border-gray-300 bg-white p-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-600 dark:bg-dark-bg dark:text-white dark:placeholder-gray-500"
           />
         </div>
         <div>
@@ -57,7 +57,7 @@ export default function Login() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-bg p-2 focus:border-primary focus:ring-primary"
+            className="mt-1 block w-full rounded-md border border-gray-300 bg-white p-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-600 dark:bg-dark-bg dark:text-white dark:placeholder-gray-500"
           />
         </div>
         <button

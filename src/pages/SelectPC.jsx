@@ -66,7 +66,7 @@ export default function SelectPC() {
   };
 
   return (
-    <section className="p-4">
+    <section className="p-4 text-gray-900 dark:text-white">
       <h2 className="text-2xl font-semibold mb-4">Select PC Manually</h2>
 
       <div className="grid gap-4 max-w-lg">
@@ -74,7 +74,7 @@ export default function SelectPC() {
         <select
           value={selectedBlock}
           onChange={(e) => setSelectedBlock(e.target.value)}
-          className="rounded border p-2"
+          className="rounded border p-2 border-gray-300 bg-white text-gray-900 placeholder-gray-400 dark:border-gray-600 dark:bg-dark-bg dark:text-white dark:placeholder-gray-500"
         >
           <option value="">-- Select Block --</option>
           {blocks.map((b) => (
@@ -89,7 +89,7 @@ export default function SelectPC() {
           <select
             value={selectedLab}
             onChange={(e) => setSelectedLab(e.target.value)}
-            className="rounded border p-2"
+            className="rounded border p-2 border-gray-300 bg-white text-gray-900 placeholder-gray-400 dark:border-gray-600 dark:bg-dark-bg dark:text-white dark:placeholder-gray-500"
           >
             <option value="">-- Select Lab --</option>
             {labs.map((l) => (
@@ -105,7 +105,7 @@ export default function SelectPC() {
           <select
             value={selectedRoom}
             onChange={(e) => setSelectedRoom(e.target.value)}
-            className="rounded border p-2"
+            className="rounded border p-2 border-gray-300 bg-white text-gray-900 placeholder-gray-400 dark:border-gray-600 dark:bg-dark-bg dark:text-white dark:placeholder-gray-500"
           >
             <option value="">-- Select Room --</option>
             {rooms.map((r) => (
@@ -125,7 +125,7 @@ export default function SelectPC() {
                 <li key={pc.id}>
                   <button
                     onClick={() => handlePcSelect(pc)}
-                    className={`w-full text-left rounded p-2 border ${selectedPc?.id === pc.id ? "bg-primary text-white" : "bg-white dark:bg-dark-surface"}`}
+                    className={`w-full text-left rounded p-2 border ${selectedPc?.id === pc.id ? "bg-primary text-white" : "bg-white text-gray-900 border-gray-300 dark:bg-dark-surface dark:text-white dark:border-gray-600"}`}
                   >
                     {pc.displayCode} (PC #{pc.pcNumber})
                   </button>

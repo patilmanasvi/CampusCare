@@ -4,6 +4,7 @@ import Layout from './components/layout/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ScanQR from './pages/ScanQR';
+import ReportIssue from './pages/ReportIssue';
 import SelectPC from './pages/SelectPC';
 import { useAuth } from './context/AuthContext';
 
@@ -28,6 +29,7 @@ export default function App() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="scan-qr" element={<ScanQR />} />
+        <Route path="report-issue" element={<ReportIssue />} />
         <Route path="select-pc" element={<SelectPC />} />
         {/* Future routes go here */}
       </Route>

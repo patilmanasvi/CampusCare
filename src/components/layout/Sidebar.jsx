@@ -30,8 +30,10 @@ export default function Sidebar() {
             <NavLink
               to={to}
               className={({ isActive }) =>
-                `flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                  isActive ? 'bg-primary text-white' : 'text-gray-900 dark:text-gray-200'
+                `flex items-center p-2 rounded transition-colors ${
+                  isActive
+                    ? 'bg-primary text-white hover:bg-primary-dark'
+                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
                 }`
               }
             >
@@ -43,7 +45,7 @@ export default function Sidebar() {
         <li>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-200"
+            className="flex w-full items-center p-2 rounded text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
           >
             <LogOut size={18} className="mr-2" />
             Logout

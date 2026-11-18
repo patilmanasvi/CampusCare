@@ -1,25 +1,35 @@
 // src/context/ThemeContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-// Theme can be "light" or "dark"
 const ThemeContext = createContext();
 
-export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState("light");
-
-  // Load persisted theme on mount
-  useEffect(() => {
+const getInitialTheme = () => {
+  try {
     const stored = localStorage.getItem("theme");
-    if (stored) setTheme(stored);
-  }, []);
+    if (stored === "light" || stored === "dark") return stored;
+  } catch {
+    // localStorage unavailable
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+};
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState(getInitialTheme);
 
   // Apply theme class to <html> and persist
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("theme", theme);
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      // ignore
+    }
   }, [theme]);
 
-  const toggleTheme = () => setTheme(prev => (prev === "light" ? "dark" : "light"));
+  const toggleTheme = () =>
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
