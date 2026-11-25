@@ -83,13 +83,13 @@ ON CONFLICT (id) DO NOTHING;
 
 -- 5. Sample Users
 -- Password for all sample users is: password123 (hashed with bcrypt 10 rounds)
--- Hash: $2b$10$w81W2e77XoFwKq8mQzKqI.hQk2jL5Q2O8tH9zQ4j2K1m8z2y6w2uq (standard bcrypt)
+-- Hash: $2a$10$gyyYt8.Fhz8DGJsgbNG1uuptm6U0NrC5PcyjHLtbowq21j88l/bjO
 INSERT INTO users (id, role_id, email, password_hash, full_name, phone, department, designation, account_status) VALUES
-('5b2f8c1e-4d3a-4c6b-9e7f-000000000001', 1, 'teacher@college.edu', '$2b$10$3euPcmQ1YpQhR9g/s2gC6eIq4O8qU0H6qf6k0w5Gq9k7Z2c3m4u1a', 'Prof. Anjali Deshmukh', '9820012345', 'Computer Engineering', 'Assistant Professor', 'ACTIVE'),
-('5b2f8c1e-4d3a-4c6b-9e7f-000000000002', 1, 'other.teacher@college.edu', '$2b$10$3euPcmQ1YpQhR9g/s2gC6eIq4O8qU0H6qf6k0w5Gq9k7Z2c3m4u1a', 'Prof. Rahul Mehta', '9819098765', 'Information Technology', 'Associate Professor', 'ACTIVE'),
-('5b2f8c1e-4d3a-4c6b-9e7f-000000000003', 1, 'pending.teacher@college.edu', '$2b$10$3euPcmQ1YpQhR9g/s2gC6eIq4O8qU0H6qf6k0w5Gq9k7Z2c3m4u1a', 'Prof. Sneha Kulkarni', '9833011223', 'Electronics & Telecommunication', 'Assistant Professor', 'PENDING'),
-('5b2f8c1e-4d3a-4c6b-9e7f-000000000004', 2, 'tech@college.edu', '$2b$10$3euPcmQ1YpQhR9g/s2gC6eIq4O8qU0H6qf6k0w5Gq9k7Z2c3m4u1a', 'Suresh Patil', '9821054321', 'Campus IT Support', 'Senior Lab Technician', 'ACTIVE'),
-('5b2f8c1e-4d3a-4c6b-9e7f-000000000005', 3, 'admin@college.edu', '$2b$10$3euPcmQ1YpQhR9g/s2gC6eIq4O8qU0H6qf6k0w5Gq9k7Z2c3m4u1a', 'Dr. Arvind Sharma', '9820099887', 'Information Technology', 'Head of IT Infrastructure', 'ACTIVE')
+('5b2f8c1e-4d3a-4c6b-9e7f-000000000001', 1, 'teacher@college.edu', '$2a$10$gyyYt8.Fhz8DGJsgbNG1uuptm6U0NrC5PcyjHLtbowq21j88l/bjO', 'Prof. Anjali Deshmukh', '9820012345', 'Computer Engineering', 'Assistant Professor', 'ACTIVE'),
+('5b2f8c1e-4d3a-4c6b-9e7f-000000000002', 1, 'other.teacher@college.edu', '$2a$10$gyyYt8.Fhz8DGJsgbNG1uuptm6U0NrC5PcyjHLtbowq21j88l/bjO', 'Prof. Rahul Mehta', '9819098765', 'Information Technology', 'Associate Professor', 'ACTIVE'),
+('5b2f8c1e-4d3a-4c6b-9e7f-000000000003', 1, 'pending.teacher@college.edu', '$2a$10$gyyYt8.Fhz8DGJsgbNG1uuptm6U0NrC5PcyjHLtbowq21j88l/bjO', 'Prof. Sneha Kulkarni', '9833011223', 'Electronics & Telecommunication', 'Assistant Professor', 'PENDING'),
+('5b2f8c1e-4d3a-4c6b-9e7f-000000000004', 2, 'tech@college.edu', '$2a$10$gyyYt8.Fhz8DGJsgbNG1uuptm6U0NrC5PcyjHLtbowq21j88l/bjO', 'Suresh Patil', '9821054321', 'Campus IT Support', 'Senior Lab Technician', 'ACTIVE'),
+('5b2f8c1e-4d3a-4c6b-9e7f-000000000005', 3, 'admin@college.edu', '$2a$10$gyyYt8.Fhz8DGJsgbNG1uuptm6U0NrC5PcyjHLtbowq21j88l/bjO', 'Dr. Arvind Sharma', '9820099887', 'Information Technology', 'Head of IT Infrastructure', 'ACTIVE')
 ON CONFLICT (id) DO NOTHING;
 
 -- 6. Sample PCs (Synchronized with Member 1 & Member 4 Asset IDs)

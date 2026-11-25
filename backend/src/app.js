@@ -5,6 +5,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 const config = require('./config/env');
 const apiRoutes = require('./routes/apiRoutes');
 const notFoundHandler = require('./middleware/notFoundHandler');
@@ -14,6 +15,9 @@ const app = express();
 
 // Security HTTP headers
 app.use(helmet());
+
+// Cookie parser for reading secure HTTP-only cookies
+app.use(cookieParser(config.auth.cookieSecret));
 
 // CORS configuration - Allow React frontend (Member 1) and Admin Dashboard (Member 4)
 const allowedOrigins = [

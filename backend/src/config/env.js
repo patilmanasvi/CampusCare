@@ -22,6 +22,14 @@ const config = {
     secret: process.env.JWT_SECRET || 'campuscare_jwt_default_secret_key',
     expiresIn: process.env.JWT_EXPIRES_IN || '24h',
   },
+  auth: {
+    cookieName: process.env.COOKIE_NAME || 'campuscare_token',
+    cookieSecret: process.env.COOKIE_SECRET || process.env.JWT_SECRET || 'campuscare_cookie_secret_key',
+    cookieSecure: process.env.COOKIE_SECURE === 'true' || process.env.NODE_ENV === 'production',
+    cookieSameSite: process.env.COOKIE_SAME_SITE || 'lax',
+    rateLimitWindowMs: parseInt(process.env.LOGIN_RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000, // 15 mins
+    rateLimitMax: parseInt(process.env.LOGIN_RATE_LIMIT_MAX, 10) || 10, // 10 attempts per window
+  },
   upload: {
     dir: process.env.UPLOAD_DIR || 'uploads/',
     maxSizeBytes: parseInt(process.env.MAX_FILE_SIZE_BYTES, 10) || 10485760, // 10MB

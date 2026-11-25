@@ -1,0 +1,121 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "CampusCare - Phase 2 Auth API",
+  "dateExported": "2026-11-23",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "_id": "req-root",
+      "name": "1. API Welcome Info",
+      "url": "http://localhost:5000/api",
+      "method": "GET",
+      "sortNum": 10000,
+      "headers": []
+    },
+    {
+      "_id": "req-health",
+      "name": "2. Health Check",
+      "url": "http://localhost:5000/api/health",
+      "method": "GET",
+      "sortNum": 20000,
+      "headers": []
+    },
+    {
+      "_id": "req-login-empty",
+      "name": "3. Login - Missing Fields (Validation Error)",
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "sortNum": 30000,
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{}"
+      }
+    },
+    {
+      "_id": "req-login-invalid-email",
+      "name": "4. Login - Invalid Email Format",
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "sortNum": 40000,
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"invalid-email\",\n  \"password\": \"password123\"\n}"
+      }
+    },
+    {
+      "_id": "req-login-wrong-pwd",
+      "name": "5. Login - Incorrect Password",
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "sortNum": 50000,
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"teacher@college.edu\",\n  \"password\": \"wrong_password\"\n}"
+      }
+    },
+    {
+      "_id": "req-login-success-teacher",
+      "name": "6. Login - Teacher Success (Returns JWT & Safe Profile)",
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "sortNum": 60000,
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"teacher@college.edu\",\n  \"password\": \"password123\"\n}"
+      }
+    },
+    {
+      "_id": "req-login-success-admin",
+      "name": "7. Login - Admin Success",
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "sortNum": 70000,
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"admin@college.edu\",\n  \"password\": \"password123\"\n}"
+      }
+    },
+    {
+      "_id": "req-me-no-token",
+      "name": "8. Current User /me - Missing Token (401)",
+      "url": "http://localhost:5000/api/auth/me",
+      "method": "GET",
+      "sortNum": 80000,
+      "headers": []
+    },
+    {
+      "_id": "req-me-with-token",
+      "name": "9. Current User /me - Valid Token (200)",
+      "url": "http://localhost:5000/api/auth/me",
+      "method": "GET",
+      "sortNum": 90000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer PASTE_TOKEN_HERE" }
+      ]
+    },
+    {
+      "_id": "req-logout",
+      "name": "10. Logout (Clears Cookie)",
+      "url": "http://localhost:5000/api/auth/logout",
+      "method": "POST",
+      "sortNum": 100000,
+      "headers": []
+    }
+  ]
+}
