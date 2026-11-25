@@ -6,7 +6,7 @@ Teacher-facing web app for reporting and tracking lab PC problems. Teachers scan
 
 ## Features
 
-- Login with college email + password (mock for now), show/hide password, validation, session restored after refresh, protected pages, logout with confirmation
+- Login with college email + password, show/hide password, validation, session restored after refresh, protected pages, logout with confirmation
 - Dashboard: greeting, quick actions, 5 summary cards, recent requests, recent notifications
 - QR scanning with camera permission / no-camera / invalid-code handling, manual code entry, and QR links (`/scan-qr?token=…`)
 - Manual PC selection: Block → Lab/Room → PC (searchable, loaded from the API)
@@ -37,7 +37,7 @@ src/
   hooks/               useApi, useAttachments, useUploadConfig, usePcDetails, …
   services/            API layer used by the UI (auth, dashboard, pc, ticket, upload, notification, profile, category)
     api.js             axios client
-    endpoints.js       ALL backend paths (provisional – confirm with Member 2)
+    endpoints.js       Backend route paths matching the checked-in Express API
   mock/                mock backend used while the real API isn't ready
   components/
     common/            buttons, badges, dialogs, states, searchable select, …
@@ -77,8 +77,8 @@ Set these in `.env.local` (never commit it). Anything starting with `VITE_` ends
 
 | Variable | Default | What it does |
 |---|---|---|
-| `VITE_API_BASE_URL` | `/api` | Base URL of the Express backend. Get the real value from Member 2. |
-| `VITE_USE_MOCK_API` | `true` | `true` uses the mock in `src/mock`; `false` calls the real backend. |
+| `VITE_API_BASE_URL` | `http://localhost:5000/api` | Base URL of the Express backend. |
+| `VITE_USE_MOCK_API` | `false` | Set `true` to use local mock services in `src/mock`. |
 | `VITE_MOCK_LATENCY_MS` | `400` | Fake network delay in mock mode. |
 | `VITE_NOTIFICATION_POLL_MS` | `60000` | How often the bell refreshes. `0` turns it off. |
 | `VITE_COLLEGE_EMAIL_DOMAIN` | *(empty)* | If set (e.g. `college.edu`), login only accepts that email domain. |
@@ -87,7 +87,7 @@ Restart `npm run dev` after changing env values.
 
 ## Mock mode
 
-With `VITE_USE_MOCK_API=true` (the default) the whole app works without a backend. Mock data is stored in the browser's localStorage, so it survives a refresh.
+Set `VITE_USE_MOCK_API=true` to run the optional local demo without a backend. Mock data is stored in the browser's localStorage, so it survives a refresh. The normal default calls the Express API.
 
 Demo accounts (mock only):
 
@@ -113,18 +113,15 @@ To reset the mock data, run `campuscareResetMock()` in the browser console.
 
 ## Connecting to the real backend
 
-1. Agree the API contract with Member 2 (and Member 3 for ticket and Jira behaviour).
-2. Update paths in `src/services/endpoints.js`. The paths in it now are **placeholders, not the agreed API**.
-3. If the response shapes differ, adjust only the matching `real…Service` object in `src/services/*Service.js`. Pages and components don't need to change.
-4. Set `VITE_USE_MOCK_API=false` and `VITE_API_BASE_URL` in `.env.local`, then restart.
+The real backend is the default. Start PostgreSQL and the API, then start Vite. For a different backend address, set `VITE_API_BASE_URL` in `.env.local` and restart Vite. The paths in `src/services/endpoints.js` match the API routes and teacher aliases in `backend/src/routes/`.
 
-Things to confirm with Member 2:
+Coordinate these cross-member details as implementation evolves:
 
 - **Auth:** httpOnly cookie or bearer token? The client supports both (`withCredentials` plus an optional `token` in the login response). Login error codes for pending or inactive accounts. A `/me`-style endpoint for restoring the session.
 - **Error format:** the client reads `message`, `code` and `details` from error responses (`src/utils/errors.js`).
 - **Lists:** `{ items, total, page, pageSize }` for My Requests and notifications.
 - **Ticket shape:** `status`, `urgency`, `events[]` (`type`, `at`, `note`), `comments[]` with an explicit **customer-visible** flag (`visibility: 'PUBLIC'`), `canVerify`, `canComment`.
-- **Uploads:** an upload-config endpoint (max size, max files, allowed types). Upload files first and send `attachmentIds`, or use multipart on create?
+- **Uploads:** upload files first and send `attachmentIds`; the backend links them atomically when the ticket/comment request is saved.
 - **Duplicates:** the response of the duplicate check, and how much of another teacher's ticket may be shown (the UI shows no description or name).
 - **Idempotency:** whether the backend honours the `Idempotency-Key` header.
 - **Profile:** `editableFields` list and the avatar upload endpoint.

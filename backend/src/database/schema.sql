@@ -235,7 +235,7 @@ CREATE TABLE IF NOT EXISTS sync_events (
 -- ==============================================================================
 CREATE TABLE IF NOT EXISTS attachments (
     id VARCHAR(50) PRIMARY KEY, -- e.g. 'att-1' or UUID
-    ticket_id VARCHAR(50) NOT NULL REFERENCES tickets(id) ON DELETE RESTRICT,
+    ticket_id VARCHAR(50) REFERENCES tickets(id) ON DELETE RESTRICT,
     comment_id UUID REFERENCES ticket_comments(id) ON DELETE SET NULL,
     uploader_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     file_name VARCHAR(255) NOT NULL,

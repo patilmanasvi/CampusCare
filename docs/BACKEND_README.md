@@ -15,7 +15,7 @@ backend/
 ├── .env                        # Local active configuration (credentials)
 ├── .gitignore                  # Git ignore rules for node_modules, logs, .env
 ├── package.json                # Project dependencies, scripts, and metadata
-├── README.md                   # Backend documentation and developer manual
+├── README.md                   # Project overview (see docs/BACKEND_README.md here)
 └── src/
     ├── app.js                  # Express app setup (middleware, CORS, routes)
     ├── server.js               # HTTP server entrypoint & graceful shutdown
@@ -26,9 +26,7 @@ backend/
     │   └── healthController.js # Health check & system diagnostics handler
     ├── database/
     │   ├── schema.sql          # Complete DDL SQL schema (15 tables, constraints, indexes)
-    │   ├── seeds.sql           # Master institutional and development seed data
-    │   ├── DATA_DICTIONARY.md  # Detailed column-by-column database reference
-    │   └── ER_DIAGRAM.md       # Visual Entity-Relationship diagram (Mermaid)
+    │   └── seeds.sql           # Master institutional and development seed data
     ├── middleware/
     │   ├── errorHandler.js     # Centralized error handler
     │   └── notFoundHandler.js  # 404 resource not found handler
@@ -38,6 +36,8 @@ backend/
     └── services/
         └── index.js            # Services module registry
 ```
+
+Project documentation now lives together under `docs/`. See [the implementation data dictionary](DATABASE_DATA_DICTIONARY_IMPLEMENTATION.md) and [ER diagram](DATABASE_ER_DIAGRAM.md).
 
 ---
 

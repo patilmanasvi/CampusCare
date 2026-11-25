@@ -3,10 +3,19 @@
  */
 require('dotenv').config();
 
+const envName = process.env.NODE_ENV || 'development';
+const isProduction = envName === 'production';
+const jwtSecret = process.env.JWT_SECRET || (isProduction ? '' : 'campuscare_jwt_default_secret_key');
+const cookieSecret = process.env.COOKIE_SECRET || process.env.JWT_SECRET || (isProduction ? '' : 'campuscare_cookie_secret_key');
+
+if (isProduction && (jwtSecret.length < 32 || cookieSecret.length < 32)) {
+  throw new Error('JWT_SECRET and COOKIE_SECRET must each be configured with at least 32 characters in production.');
+}
+
 const config = {
-  env: process.env.NODE_ENV || 'development',
+  env: envName,
   port: parseInt(process.env.PORT, 10) || 5000,
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+  frontendUrl: process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173',
   db: {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT, 10) || 5432,
@@ -19,12 +28,12 @@ const config = {
     connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT_MS, 10) || 5000,
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'campuscare_jwt_default_secret_key',
+    secret: jwtSecret,
     expiresIn: process.env.JWT_EXPIRES_IN || '24h',
   },
   auth: {
     cookieName: process.env.COOKIE_NAME || 'campuscare_token',
-    cookieSecret: process.env.COOKIE_SECRET || process.env.JWT_SECRET || 'campuscare_cookie_secret_key',
+    cookieSecret,
     cookieSecure: process.env.COOKIE_SECURE === 'true' || process.env.NODE_ENV === 'production',
     cookieSameSite: process.env.COOKIE_SAME_SITE || 'lax',
     rateLimitWindowMs: parseInt(process.env.LOGIN_RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000, // 15 mins

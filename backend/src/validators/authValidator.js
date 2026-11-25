@@ -9,6 +9,9 @@ const { body } = require('express-validator');
  */
 const loginRules = [
   body('email')
+    .isString()
+    .withMessage('Email address must be text')
+    .bail()
     .trim()
     .notEmpty()
     .withMessage('Email address is required')
@@ -19,6 +22,9 @@ const loginRules = [
     .withMessage('Email address must not exceed 255 characters'),
 
   body('password')
+    .isString()
+    .withMessage('Password must be text')
+    .bail()
     .notEmpty()
     .withMessage('Password is required')
     .isLength({ min: 6 })

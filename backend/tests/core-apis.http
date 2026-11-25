@@ -1,0 +1,198 @@
+### ==============================================================================
+### CampusCare Backend - Phase 3 Core APIs Test Suite
+### Compatible with: VS Code REST Client & Thunder Client
+### ==============================================================================
+
+@baseUrl = http://localhost:5000/api
+@teacherEmail = teacher@college.edu
+@password = password123
+
+### ------------------------------------------------------------------------------
+### 1. Authenticate Teacher (Obtain Token for Following Requests)
+### ------------------------------------------------------------------------------
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{teacherEmail}}",
+  "password": "{{password}}"
+}
+
+### Store Auth Token from login response
+@authToken = {{login.response.body.token}}
+@pcId = 5b2f8c1e-4d3a-4c6b-9e7f-000000000101
+@qrToken = qr-campuscare-522-01
+
+### ------------------------------------------------------------------------------
+### 2. TASK A: PC & Location APIs
+### ------------------------------------------------------------------------------
+
+# @name getBlocks
+GET {{baseUrl}}/blocks
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getLabs
+GET {{baseUrl}}/labs
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getLabsByBlock
+GET {{baseUrl}}/labs?blockId=blk-a
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getAllPcs
+GET {{baseUrl}}/pcs
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getPcsFilteredByLab
+GET {{baseUrl}}/pcs?labId=room-522
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getPcDetails
+GET {{baseUrl}}/pcs/{{pcId}}
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name lookupPcByQrToken
+GET {{baseUrl}}/pcs/qr/{{qrToken}}
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getPcActiveTickets
+GET {{baseUrl}}/pcs/{{pcId}}/active-tickets
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getCategories
+GET {{baseUrl}}/categories
+Authorization: Bearer {{authToken}}
+
+### ------------------------------------------------------------------------------
+### 3. TASK B & C: Ticket APIs & Duplicate Check
+### ------------------------------------------------------------------------------
+
+# @name checkDuplicates
+GET {{baseUrl}}/tickets/check-duplicate?pcId={{pcId}}&categoryId=cat-display
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name createTicket
+# @idempotencyKey = idem-{{$guid}}
+POST {{baseUrl}}/tickets
+Authorization: Bearer {{authToken}}
+Idempotency-Key: idem-test-key-001
+Content-Type: application/json
+
+{
+  "pcId": "{{pcId}}",
+  "categoryId": "cat-display",
+  "subcategoryId": "sub-no-display",
+  "urgency": "HIGH",
+  "description": "Monitor power LED blinks blue but display remains black during lecture.",
+  "remarks": "Tried power cycling and reseating HDMI cable."
+}
+
+### Capture Created Ticket ID
+@createdTicketId = {{createTicket.response.body.ticket.id}}
+
+### ------------------------------------------------------------------------------
+### 4. TASK D: Ticket Details, Timeline, Comments, Info, Verification
+### ------------------------------------------------------------------------------
+
+# @name getMyTickets
+GET {{baseUrl}}/tickets/my?page=1&pageSize=10
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getTicketDetails
+GET {{baseUrl}}/tickets/{{createdTicketId}}
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getTicketTimeline
+GET {{baseUrl}}/tickets/{{createdTicketId}}/timeline
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name addComment
+POST {{baseUrl}}/tickets/{{createdTicketId}}/comments
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "body": "Tested with another HDMI cable, problem still persists."
+}
+
+###
+
+# @name addInformation
+POST {{baseUrl}}/tickets/{{createdTicketId}}/information
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "message": "Computer graphics card fan is spinning loudly as well."
+}
+
+###
+
+# @name submitVerificationWorking
+# Teacher confirms repair is working
+POST {{baseUrl}}/tickets/{{createdTicketId}}/verification
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "result": "WORKING",
+  "rating": 5,
+  "comment": "Screen is displaying properly now. Thank you!"
+}
+
+### ------------------------------------------------------------------------------
+### 5. TASK E: Jira Inbound Sync (Member 3 Interface)
+### ------------------------------------------------------------------------------
+
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@college.edu",
+  "password": "{{password}}"
+}
+
+### Store Admin Token
+@adminToken = {{loginAdmin.response.body.token}}
+
+###
+
+# @name jiraSyncWebhook
+PATCH {{baseUrl}}/tickets/{{createdTicketId}}/jira-sync
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "jiraIssueKey": "JSM-1042",
+  "jiraIssueId": "10042",
+  "status": "IN_PROGRESS",
+  "technicianName": "Suresh Patil",
+  "comment": "Assigned technician on-site to inspect GPU and cabling."
+}

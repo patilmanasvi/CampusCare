@@ -6,6 +6,7 @@ import api from './api';
 import { ENDPOINTS } from './endpoints';
 import { USE_MOCK_API } from '../config/env';
 import { mockTicketService } from '../mock/ticketService';
+import { normalizeTicket } from '../utils/backendUrl';
 
 const realTicketService = {
   /** params: { search, status, urgency, categoryId, dateFrom, dateTo, sort, page, pageSize } */
@@ -15,7 +16,7 @@ const realTicketService = {
   },
   async getTicket(ticketId) {
     const { data } = await api.get(ENDPOINTS.tickets.detail(ticketId));
-    return data?.ticket ?? data;
+    return normalizeTicket(data?.ticket ?? data);
   },
   /** Returns { matches: [...] } — active tickets the backend thinks may be related. */
   async checkDuplicates({ pcId, categoryId, subcategoryId }) {
@@ -27,7 +28,7 @@ const realTicketService = {
     const { data } = await api.post(ENDPOINTS.tickets.create, payload, {
       headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
     });
-    return data?.ticket ?? data;
+    return normalizeTicket(data?.ticket ?? data);
   },
   async addInformation(ticketId, { message, attachmentIds = [] }, { idempotencyKey } = {}) {
     const { data } = await api.post(
@@ -35,7 +36,7 @@ const realTicketService = {
       { message, attachmentIds },
       { headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined }
     );
-    return data?.ticket ?? data;
+    return normalizeTicket(data?.ticket ?? data);
   },
   async addComment(ticketId, { body, attachmentIds = [] }, { idempotencyKey } = {}) {
     const { data } = await api.post(
@@ -43,14 +44,14 @@ const realTicketService = {
       { body, attachmentIds },
       { headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined }
     );
-    return data?.ticket ?? data;
+    return normalizeTicket(data?.ticket ?? data);
   },
   /** payload: { result: 'WORKING' | 'NOT_WORKING', explanation?, comment?, rating? } */
   async submitVerification(ticketId, payload, { idempotencyKey } = {}) {
     const { data } = await api.post(ENDPOINTS.tickets.verification(ticketId), payload, {
       headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
     });
-    return data?.ticket ?? data;
+    return normalizeTicket(data?.ticket ?? data);
   },
 };
 

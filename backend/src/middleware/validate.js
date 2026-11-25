@@ -28,7 +28,7 @@ const validate = (validations) => {
       field: err.path || err.param || 'unknown',
       message: err.msg,
       // Never reflect back raw passwords in validation errors
-      ...(err.path !== 'password' && err.path !== 'newPassword' && { value: err.value }),
+      // Do not echo arbitrary user supplied data (tokens, file metadata, etc.) in errors.
     }));
 
     return res.status(400).json({

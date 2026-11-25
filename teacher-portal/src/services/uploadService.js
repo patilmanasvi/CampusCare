@@ -5,6 +5,7 @@ import api from './api';
 import { ENDPOINTS } from './endpoints';
 import { USE_MOCK_API } from '../config/env';
 import { mockUploadService } from '../mock/uploadService';
+import { normalizeAttachment } from '../utils/backendUrl';
 
 const realUploadService = {
   /** Expected: { maxFileSizeBytes?, maxFiles?, acceptedMimeTypes?: string[] } */
@@ -21,7 +22,7 @@ const realUploadService = {
         if (onProgress && e.total) onProgress(Math.round((e.loaded / e.total) * 100));
       },
     });
-    return data?.attachment ?? data;
+    return normalizeAttachment(data?.attachment ?? data);
   },
 };
 

@@ -9,7 +9,10 @@ const realNotificationService = {
   /** params: { unreadOnly, page, pageSize } -> { items, total, unreadCount } */
   async list(params = {}) {
     const { data } = await api.get(ENDPOINTS.notifications.list, { params });
-    return data;
+    return {
+      ...data,
+      items: (data?.items || []).map((item) => ({ ...item, read: item.read ?? item.isRead ?? false })),
+    };
   },
   async getUnreadCount() {
     const { data } = await api.get(ENDPOINTS.notifications.unreadCount);
