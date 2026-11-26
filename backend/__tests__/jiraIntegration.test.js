@@ -294,5 +294,40 @@ describe('Jira Service Management Integration Tests (Member 3)', () => {
       expect(outcome.status).toBe('RETRY');
       expect(outcome.retryCount).toBe(2);
     });
+
+    it('should poll active tickets and synchronize inbound status from Jira', async () => {
+      // Mock active tickets query
+      db.query.mockResolvedValueOnce({
+        rows: [{ id: 'LAB-10', status: 'SUBMITTED', jira_issue_key: 'CAM-6', jira_issue_id: '10005' }],
+      });
+
+      // Mock client.getIssue
+      mockClient.getIssue = jest.fn().mockResolvedValue({
+        id: '10005',
+        key: 'CAM-6',
+        fields: {
+          status: { name: 'In Progress' },
+          assignee: { displayName: 'Nishita Shinde' },
+        },
+      });
+
+      // Mock ticketRepository.syncFromJira
+      const ticketRepository = require('../src/repositories/ticketRepository');
+      jest.spyOn(ticketRepository, 'syncFromJira').mockResolvedValueOnce({
+        id: 'LAB-10',
+        status: 'IN_PROGRESS',
+        jira_issue_key: 'CAM-6',
+      });
+
+      const outcome = await syncService.syncInboundStatus(10);
+      expect(outcome.checked).toBe(1);
+      expect(outcome.updated).toBe(1);
+      expect(ticketRepository.syncFromJira).toHaveBeenCalledWith('LAB-10', {
+        jiraIssueKey: 'CAM-6',
+        jiraIssueId: '10005',
+        status: 'IN_PROGRESS',
+        technicianName: 'Nishita Shinde',
+      });
+    });
   });
 });

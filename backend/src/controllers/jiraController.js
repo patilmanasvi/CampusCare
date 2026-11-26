@@ -195,9 +195,29 @@ const processQueue = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/jira/sync-inbound
+ * Manually trigger inbound status synchronization from Jira
+ */
+const syncInbound = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit, 10) || 20;
+    const result = await jiraSyncService.syncInboundStatus(limit);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Inbound status synchronization complete.',
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getIntegrationStatus,
   handleJiraWebhook,
   retrySync,
   processQueue,
+  syncInbound,
 };

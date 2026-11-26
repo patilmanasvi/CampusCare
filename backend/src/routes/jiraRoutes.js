@@ -33,4 +33,9 @@ router.post('/retry/:id', authenticate, authorizeRoles('ADMIN', 'TECHNICIAN'), j
  */
 router.post('/process-queue', authenticate, authorizeRoles('ADMIN'), jiraController.processQueue);
 
+/**
+ * Trigger inbound status synchronization from Jira
+ */
+router.post('/sync-inbound', jiraController.syncInbound);
+
 module.exports = router;

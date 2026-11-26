@@ -12,6 +12,8 @@
 const db = require('../config/db');
 const { jiraConfig, isJiraConfigured } = require('../config/jiraConfig');
 const { jiraClient } = require('./jiraClient');
+const { normalizeJiraStatus } = require('./jiraMapping');
+const ticketRepository = require('../repositories/ticketRepository');
 
 class JiraSyncService {
   constructor(client = jiraClient) {
@@ -309,6 +311,59 @@ class JiraSyncService {
   }
 
   /**
+   * Synchronizes ticket status updates from Jira Service Management into CampusCare
+   * Polls active tickets linked to Jira and updates their local status if changed in Jira
+   * @param {number} limit
+   * @returns {Promise<{ checked: number, updated: number }>}
+   */
+  async syncInboundStatus(limit = 20) {
+    try {
+      const activeTickets = await db.query(
+        `SELECT id, status, jira_issue_key, jira_issue_id
+         FROM tickets
+         WHERE jira_issue_key IS NOT NULL AND status NOT IN ('CLOSED')
+         ORDER BY updated_at ASC
+         LIMIT $1`,
+        [limit]
+      );
+
+      if (!activeTickets.rows || activeTickets.rows.length === 0) {
+        return { checked: 0, updated: 0 };
+      }
+
+      let updatedCount = 0;
+      for (const ticket of activeTickets.rows) {
+        try {
+          const issue = await this.client.getIssue(ticket.jira_issue_key);
+          const rawStatus = issue?.fields?.status?.name;
+          const mappedStatus = normalizeJiraStatus(rawStatus);
+          const technicianName = issue?.fields?.assignee?.displayName || 'Jira Technician';
+
+          if (mappedStatus && mappedStatus !== ticket.status) {
+            await ticketRepository.syncFromJira(ticket.id, {
+              jiraIssueKey: ticket.jira_issue_key,
+              jiraIssueId: String(issue.id || ticket.jira_issue_id || ''),
+              status: mappedStatus,
+              technicianName,
+            });
+            updatedCount++;
+            console.log(
+              `[JiraSyncService] Inbound sync: ${ticket.id} (${ticket.jira_issue_key}) status updated: ${ticket.status} -> ${mappedStatus}`
+            );
+          }
+        } catch (issueErr) {
+          // If a single issue cannot be fetched (e.g. deleted or permissions), continue with remaining
+        }
+      }
+
+      return { checked: activeTickets.rows.length, updated: updatedCount };
+    } catch (err) {
+      console.error('[JiraSyncService Inbound Sync Error]:', err.message);
+      return { checked: 0, updated: 0, error: err.message };
+    }
+  }
+
+  /**
    * Starts periodic background poller
    * @param {number} intervalMs
    */
@@ -320,6 +375,7 @@ class JiraSyncService {
       try {
         if (isJiraConfigured()) {
           await this.processPendingEvents();
+          await this.syncInboundStatus();
         }
       } catch (err) {
         console.error('[JiraSyncService Worker Error]:', err.message);
