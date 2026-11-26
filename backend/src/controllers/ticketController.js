@@ -234,14 +234,15 @@ const submitVerification = async (req, res, next) => {
 const syncFromJira = async (req, res, next) => {
   try {
     const ticketId = req.params.id;
-    const { jiraIssueKey, jiraIssueId, status, comment, technicianName } = req.body;
+    const { jiraIssueKey, jiraIssueId, status, comment } = req.body;
+    const technicianName = req.body.technicianName || (req.user ? req.user.fullName : 'Jira System');
 
     const updated = await ticketService.syncFromJira(ticketId, {
       jiraIssueKey,
       jiraIssueId,
       status,
       comment,
-      technicianName: req.user.fullName,
+      technicianName,
     });
 
     return res.status(200).json({

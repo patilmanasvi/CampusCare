@@ -8,6 +8,7 @@ const router = express.Router();
 const ticketController = require('../controllers/ticketController');
 const { authenticate } = require('../middleware/authMiddleware');
 const { authorizeRoles } = require('../middleware/roleMiddleware');
+const { authenticateJiraWebhook } = require('../middleware/jiraWebhookAuth');
 const validate = require('../middleware/validate');
 const {
   createTicketRules,
@@ -38,9 +39,14 @@ router.get('/', authenticate, validate(listTicketRules), ticketController.listMy
 router.post('/', authenticate, authorizeRoles('TEACHER'), validate(createTicketRules), ticketController.createTicket);
 
 /**
- * Inbound Jira synchronization (Member 3 - restricted to ADMIN or TECHNICIAN)
+ * Inbound Jira synchronization (Member 3 - accepts ADMIN/TECHNICIAN JWT or Jira webhook secret)
  */
-router.patch('/:id/jira-sync', authenticate, authorizeRoles('ADMIN', 'TECHNICIAN'), validate(jiraSyncRules), ticketController.syncFromJira);
+router.patch(
+  ['/:id/jira-sync', '/:id/sync'],
+  authenticateJiraWebhook,
+  validate(jiraSyncRules),
+  ticketController.syncFromJira
+);
 
 /**
  * Ticket details

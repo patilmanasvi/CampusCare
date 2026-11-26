@@ -10,6 +10,7 @@ const dashboardRoutes = require('./dashboardRoutes');
 const profileRoutes = require('./profileRoutes');
 const notificationRoutes = require('./notificationRoutes');
 const uploadRoutes = require('./uploadRoutes');
+const jiraRoutes = require('./jiraRoutes');
 
 const pcController = require('../controllers/pcController');
 const { authenticate } = require('../middleware/authMiddleware');
@@ -29,6 +30,7 @@ router.use('/dashboard', dashboardRoutes);
 router.use('/profile', profileRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/uploads', uploadRoutes);
+router.use('/jira', jiraRoutes);
 
 // Direct Location APIs specified in Task A
 router.get('/blocks', authenticate, pcController.getBlocks);

@@ -5,6 +5,8 @@
 const app = require('./app');
 const config = require('./config/env');
 const { testConnection, closePool } = require('./config/db');
+const { jiraSyncService } = require('./services/jiraSyncService');
+const { jiraConfig } = require('./config/jiraConfig');
 
 const PORT = config.port;
 
@@ -24,6 +26,11 @@ const server = app.listen(PORT, async () => {
     console.warn(`[Database Warning]   Could not connect to PostgreSQL: ${err.message}`);
     console.warn('                     Check your .env settings and ensure PostgreSQL is running.');
   }
+
+  // Launch Jira background sync poller if enabled
+  if (jiraConfig.autoStartWorker) {
+    jiraSyncService.startWorker(jiraConfig.syncIntervalMs);
+  }
 });
 
 // Graceful shutdown helper
@@ -32,6 +39,7 @@ const handleShutdown = async (signal) => {
 
   server.close(async () => {
     console.log('[Server] HTTP server closed.');
+    jiraSyncService.stopWorker();
     await closePool();
     console.log('[Server] Process exited gracefully.');
     process.exit(0);
