@@ -134,10 +134,15 @@ class JiraClient {
           pcDisplayCode: ticketData.pc ? ticketData.pc.displayCode : null,
           categoryName: ticketData.category,
           subcategoryName: ticketData.subcategory,
+          urgency: ticketData.urgency,
           description: ticketData.description,
           remarks: ticketData.remarks,
+          reporterName: ticketData.reporter ? ticketData.reporter.fullName : null,
+          reporterEmail: ticketData.reporter ? ticketData.reporter.email : null,
+          reporterDepartment: ticketData.reporter ? ticketData.reporter.department : null,
           labName: ticketData.pc ? ticketData.pc.labName : null,
           roomNumber: ticketData.pc ? ticketData.pc.roomNumber : null,
+          blockName: ticketData.pc ? ticketData.pc.block : null,
         });
 
         const res = await this.request('/rest/servicedeskapi/request', {

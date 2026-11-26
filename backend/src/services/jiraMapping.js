@@ -242,22 +242,31 @@ const buildJsmCustomerRequestPayload = ({
   pcDisplayCode,
   categoryName,
   subcategoryName,
+  urgency,
   description,
   remarks,
+  reporterName,
+  reporterEmail,
+  reporterDepartment,
   labName,
   roomNumber,
+  blockName,
 }) => {
   const summaryPrefix = pcDisplayCode ? `[${pcDisplayCode}]` : `[${ticketId}]`;
   const summary = `${summaryPrefix} ${categoryName || 'Lab PC Issue'}${subcategoryName ? ` - ${subcategoryName}` : ''}`;
   const descriptionText = [
     `CampusCare Internal ID: ${ticketId}`,
-    `Location: ${labName || 'N/A'}, Room ${roomNumber || 'N/A'}`,
+    `Reported By: ${reporterName || 'Faculty Member'} (${reporterEmail || 'N/A'})`,
+    reporterDepartment ? `Department: ${reporterDepartment}` : null,
+    `Location: ${labName || 'N/A'}, Room ${roomNumber || 'N/A'}${blockName ? `, ${blockName}` : ''}`,
     `PC Position: ${pcDisplayCode || 'N/A'}`,
+    `Category: ${categoryName || 'N/A'}${subcategoryName ? ` > ${subcategoryName}` : ''}`,
+    `Urgency: ${urgency || 'MEDIUM'}`,
     '',
     'Problem Description:',
-    description,
-    remarks ? `\nAdditional Remarks: ${remarks}` : '',
-  ].join('\n');
+    description || 'No description provided.',
+    remarks ? `\nAdditional Remarks:\n${remarks}` : null,
+  ].filter(Boolean).join('\n');
 
   return {
     serviceDeskId: String(serviceDeskId),
