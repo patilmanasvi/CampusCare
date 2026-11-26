@@ -120,7 +120,10 @@ export default function VerificationPanel({ ticket, onUpdated }) {
           <div className="grid gap-3 sm:grid-cols-2" data-error={errors.result ? 'true' : undefined}>
             <Choice
               selected={working}
-              onSelect={() => setResult(VERIFICATION_RESULT.WORKING)}
+              onSelect={() => {
+                setResult(VERIFICATION_RESULT.WORKING);
+                setErrors((e) => ({ ...e, result: undefined }));
+              }}
               icon={CircleCheck}
               tone="good"
               title="Yes, it's working"
@@ -128,7 +131,10 @@ export default function VerificationPanel({ ticket, onUpdated }) {
             />
             <Choice
               selected={result === VERIFICATION_RESULT.NOT_WORKING}
-              onSelect={() => setResult(VERIFICATION_RESULT.NOT_WORKING)}
+              onSelect={() => {
+                setResult(VERIFICATION_RESULT.NOT_WORKING);
+                setErrors((e) => ({ ...e, result: undefined }));
+              }}
               icon={CircleX}
               tone="bad"
               title="No, still not working"

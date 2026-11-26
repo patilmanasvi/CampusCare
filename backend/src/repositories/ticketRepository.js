@@ -546,8 +546,8 @@ const submitVerification = async ({ ticketId, userId, result, explanation = '', 
     const updateQuery = `
       UPDATE tickets 
       SET 
-        status = $1,
-        closed_at = CASE WHEN $1 = 'CLOSED' THEN CURRENT_TIMESTAMP ELSE closed_at END,
+        status = $1::VARCHAR,
+        closed_at = CASE WHEN $1::VARCHAR = 'CLOSED' THEN CURRENT_TIMESTAMP ELSE closed_at END,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = $2
       RETURNING *
