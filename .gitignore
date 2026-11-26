@@ -13,3 +13,6 @@ dist/
 .idea/
 .DS_Store
 *.log
+
+# Diagnostic & Scratch Scripts
+backend/scripts/

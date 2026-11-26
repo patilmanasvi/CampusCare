@@ -1,8 +1,6 @@
 // src/services/endpoints.js
 // ---------------------------------------------------------------------------
-// PROVISIONAL endpoint paths. These are placeholders so the real-API code is
-// ready; they are NOT the agreed contract. Confirm every path, payload and
-// response shape with Member 2 (backend) and update only this file.
+// Paths match the Express routes and teacher compatibility aliases in backend/src/routes.
 // ---------------------------------------------------------------------------
 const enc = encodeURIComponent;
 

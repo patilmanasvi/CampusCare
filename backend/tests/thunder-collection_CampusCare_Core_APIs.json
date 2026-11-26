@@ -1,0 +1,184 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "CampusCare - Phase 3 Core APIs",
+  "dateExported": "2026-11-25",
+  "version": "1.1",
+  "folders": [
+    { "_id": "fld-pc", "name": "1. PC & Locations", "containerId": "" },
+    { "_id": "fld-ticket", "name": "2. Tickets & Workflow", "containerId": "" },
+    { "_id": "fld-jira", "name": "3. Jira Inbound Sync", "containerId": "" }
+  ],
+  "requests": [
+    {
+      "_id": "req-blocks",
+      "colId": "fld-pc",
+      "name": "1. Fetch Blocks",
+      "url": "http://localhost:5000/api/blocks",
+      "method": "GET",
+      "sortNum": 10000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-labs",
+      "colId": "fld-pc",
+      "name": "2. Fetch Labs",
+      "url": "http://localhost:5000/api/labs",
+      "method": "GET",
+      "sortNum": 20000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-pcs",
+      "colId": "fld-pc",
+      "name": "3. Fetch PCs (Inventory)",
+      "url": "http://localhost:5000/api/pcs",
+      "method": "GET",
+      "sortNum": 30000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-pc-detail",
+      "colId": "fld-pc",
+      "name": "4. Fetch PC Details",
+      "url": "http://localhost:5000/api/pcs/5b2f8c1e-4d3a-4c6b-9e7f-000000000101",
+      "method": "GET",
+      "sortNum": 40000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-qr-lookup",
+      "colId": "fld-pc",
+      "name": "5. Lookup PC by QR Token",
+      "url": "http://localhost:5000/api/pcs/qr/qr-campuscare-522-01",
+      "method": "GET",
+      "sortNum": 50000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-active-tickets",
+      "colId": "fld-pc",
+      "name": "6. Active Tickets on PC",
+      "url": "http://localhost:5000/api/pcs/5b2f8c1e-4d3a-4c6b-9e7f-000000000101/active-tickets",
+      "method": "GET",
+      "sortNum": 60000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-check-dup",
+      "colId": "fld-ticket",
+      "name": "7. Check Potential Duplicates",
+      "url": "http://localhost:5000/api/tickets/check-duplicate?pcId=5b2f8c1e-4d3a-4c6b-9e7f-000000000101&categoryId=cat-display",
+      "method": "GET",
+      "sortNum": 70000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-create-ticket",
+      "colId": "fld-ticket",
+      "name": "8. Create Ticket (With Transaction)",
+      "url": "http://localhost:5000/api/tickets",
+      "method": "POST",
+      "sortNum": 80000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" },
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Idempotency-Key", "value": "thunder-test-key-01" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"pcId\": \"5b2f8c1e-4d3a-4c6b-9e7f-000000000101\",\n  \"categoryId\": \"cat-display\",\n  \"subcategoryId\": \"sub-no-display\",\n  \"urgency\": \"HIGH\",\n  \"description\": \"PC monitor turns completely black after booting into Windows.\",\n  \"remarks\": \"Checked cable connection\"\n}"
+      }
+    },
+    {
+      "_id": "req-my-tickets",
+      "colId": "fld-ticket",
+      "name": "9. List My Tickets",
+      "url": "http://localhost:5000/api/tickets/my?page=1&pageSize=10",
+      "method": "GET",
+      "sortNum": 90000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-ticket-detail",
+      "colId": "fld-ticket",
+      "name": "10. Ticket Details",
+      "url": "http://localhost:5000/api/tickets/LAB-1001",
+      "method": "GET",
+      "sortNum": 100000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-ticket-timeline",
+      "colId": "fld-ticket",
+      "name": "11. Ticket Timeline History",
+      "url": "http://localhost:5000/api/tickets/LAB-1001/timeline",
+      "method": "GET",
+      "sortNum": 110000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-add-comment",
+      "colId": "fld-ticket",
+      "name": "12. Add Comment",
+      "url": "http://localhost:5000/api/tickets/LAB-1001/comments",
+      "method": "POST",
+      "sortNum": 120000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"body\": \"Issue still occurs with another monitor.\"\n}"
+      }
+    },
+    {
+      "_id": "req-add-info",
+      "colId": "fld-ticket",
+      "name": "13. Add Additional Information",
+      "url": "http://localhost:5000/api/tickets/LAB-1001/information",
+      "method": "POST",
+      "sortNum": 130000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"message\": \"PC fans are spinning normally.\"\n}"
+      }
+    },
+    {
+      "_id": "req-verification",
+      "colId": "fld-ticket",
+      "name": "14. Submit Verification (WORKING)",
+      "url": "http://localhost:5000/api/tickets/LAB-1001/verification",
+      "method": "POST",
+      "sortNum": 140000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"result\": \"WORKING\",\n  \"rating\": 5,\n  \"comment\": \"Display adapter replaced and screen is working now. Thank you!\"\n}"
+      }
+    },
+    {
+      "_id": "req-jira-sync",
+      "colId": "fld-jira",
+      "name": "15. Inbound Jira Sync (Member 3)",
+      "url": "http://localhost:5000/api/tickets/LAB-1001/jira-sync",
+      "method": "PATCH",
+      "sortNum": 150000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{adminToken}}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"jiraIssueKey\": \"JSM-1042\",\n  \"jiraIssueId\": \"10042\",\n  \"status\": \"IN_PROGRESS\",\n  \"technicianName\": \"Suresh Patil\",\n  \"comment\": \"Assigned technician on-site to inspect GPU and cabling.\"\n}"
+      }
+    }
+  ]
+}

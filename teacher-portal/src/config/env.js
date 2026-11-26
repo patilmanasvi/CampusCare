@@ -2,11 +2,11 @@
 // The ONLY place that reads environment variables. Everything else imports from here.
 const env = import.meta.env;
 
-/** Base URL of the Express backend. Set VITE_API_BASE_URL in .env.local. */
-export const API_BASE_URL = env.VITE_API_BASE_URL || '/api';
+/** Base URL of the Express backend. Override in .env.local when needed. */
+export const API_BASE_URL = env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
-/** true = use the mock API in src/mock, false = call the real backend. Default: mock. */
-export const USE_MOCK_API = String(env.VITE_USE_MOCK_API ?? 'true').toLowerCase() !== 'false';
+/** Use the real API by default; opt into mocks explicitly for offline demos. */
+export const USE_MOCK_API = String(env.VITE_USE_MOCK_API ?? 'false').toLowerCase() === 'true';
 
 /** Simulated network delay for the mock API (ms). */
 export const MOCK_LATENCY_MS = Number(env.VITE_MOCK_LATENCY_MS ?? 400);

@@ -1,0 +1,109 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "CampusCare - Phase 4 Advanced APIs",
+  "dateExported": "2026-11-25",
+  "version": "1.1",
+  "folders": [
+    { "_id": "fld-dash", "name": "1. Dashboard", "containerId": "" },
+    { "_id": "fld-prof", "name": "2. Profile & Security", "containerId": "" },
+    { "_id": "fld-notif", "name": "3. Notifications", "containerId": "" },
+    { "_id": "fld-upload", "name": "4. Uploads", "containerId": "" }
+  ],
+  "requests": [
+    {
+      "_id": "req-dash-summary",
+      "colId": "fld-dash",
+      "name": "1. Dashboard Summary",
+      "url": "http://localhost:5000/api/dashboard/summary",
+      "method": "GET",
+      "sortNum": 10000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-dash-recent",
+      "colId": "fld-dash",
+      "name": "2. Dashboard Recent Requests",
+      "url": "http://localhost:5000/api/dashboard/recent-requests?limit=5",
+      "method": "GET",
+      "sortNum": 20000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-prof-get",
+      "colId": "fld-prof",
+      "name": "3. Get Profile",
+      "url": "http://localhost:5000/api/profile",
+      "method": "GET",
+      "sortNum": 30000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-prof-update",
+      "colId": "fld-prof",
+      "name": "4. Update Permitted Profile Fields",
+      "url": "http://localhost:5000/api/profile",
+      "method": "PATCH",
+      "sortNum": 40000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"phone\": \"9820012345\",\n  \"designation\": \"Associate Professor\"\n}"
+      }
+    },
+    {
+      "_id": "req-prof-blocked",
+      "colId": "fld-prof",
+      "name": "5. Blocked: Role Escalation Defense",
+      "url": "http://localhost:5000/api/profile",
+      "method": "PATCH",
+      "sortNum": 50000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{token}}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"role\": \"ADMIN\"\n}"
+      }
+    },
+    {
+      "_id": "req-notif-list",
+      "colId": "fld-notif",
+      "name": "6. List Notifications",
+      "url": "http://localhost:5000/api/notifications",
+      "method": "GET",
+      "sortNum": 60000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-notif-unread",
+      "colId": "fld-notif",
+      "name": "7. Get Unread Count",
+      "url": "http://localhost:5000/api/notifications/unread-count",
+      "method": "GET",
+      "sortNum": 70000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-notif-read-all",
+      "colId": "fld-notif",
+      "name": "8. Mark All Notifications Read",
+      "url": "http://localhost:5000/api/notifications/read-all",
+      "method": "PATCH",
+      "sortNum": 80000,
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }]
+    },
+    {
+      "_id": "req-upload-config",
+      "colId": "fld-upload",
+      "name": "9. Upload Configuration",
+      "url": "http://localhost:5000/api/uploads/config",
+      "method": "GET",
+      "sortNum": 90000,
+      "headers": []
+    }
+  ]
+}

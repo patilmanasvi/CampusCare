@@ -1,0 +1,120 @@
+### ==============================================================================
+### CampusCare Backend - Phase 4 Advanced APIs Test Suite
+### Compatible with: VS Code REST Client & Thunder Client
+### ==============================================================================
+
+@baseUrl = http://localhost:5000/api
+@teacherEmail = teacher@college.edu
+@password = password123
+
+### ------------------------------------------------------------------------------
+### 1. Authenticate Teacher
+### ------------------------------------------------------------------------------
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{teacherEmail}}",
+  "password": "{{password}}"
+}
+
+### Store Auth Token from login response
+@authToken = {{login.response.body.token}}
+
+### ------------------------------------------------------------------------------
+### 2. TASK A: Dashboard APIs
+### ------------------------------------------------------------------------------
+
+# @name getDashboardSummary
+GET {{baseUrl}}/dashboard/summary
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getDashboardRecentRequests
+GET {{baseUrl}}/dashboard/recent-requests?limit=5
+Authorization: Bearer {{authToken}}
+
+### ------------------------------------------------------------------------------
+### 3. TASK B: Profile APIs & Protected Fields
+### ------------------------------------------------------------------------------
+
+# @name getProfile
+GET {{baseUrl}}/profile
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name updateApprovedProfileFields
+PATCH {{baseUrl}}/profile
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "phone": "9820099999",
+  "designation": "Associate Professor"
+}
+
+###
+
+# @name testProtectedRoleEscalation
+# Expected: 403 Forbidden with PROTECTED_FIELD_MODIFICATION
+PATCH {{baseUrl}}/profile
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "role": "ADMIN"
+}
+
+### ------------------------------------------------------------------------------
+### 4. TASK C: Notification APIs
+### ------------------------------------------------------------------------------
+
+# @name listNotifications
+GET {{baseUrl}}/notifications
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name getUnreadCount
+GET {{baseUrl}}/notifications/unread-count
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name markAllNotificationsRead
+PATCH {{baseUrl}}/notifications/read-all
+Authorization: Bearer {{authToken}}
+
+### ------------------------------------------------------------------------------
+### 5. TASK D: Secure File Uploads
+### ------------------------------------------------------------------------------
+
+# @name getUploadConfig
+GET {{baseUrl}}/uploads/config
+
+###
+
+# @name uploadDiagnosticAttachment
+POST {{baseUrl}}/uploads
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="sample_log.txt"
+Content-Type: text/plain
+
+Diagnostic log output: Display adapter error code 43.
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Capture Attachment ID
+@attachmentId = {{uploadDiagnosticAttachment.response.body.attachment.id}}
+
+###
+
+# @name downloadAttachment
+GET {{baseUrl}}/uploads/{{attachmentId}}
+Authorization: Bearer {{authToken}}

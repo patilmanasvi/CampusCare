@@ -1,34 +1,39 @@
 # CampusCare – College Lab IT Support System
 
-Teachers report problems with lab computers by scanning a QR code on the PC. Requests are tracked through Jira Service Management, and the lab team manages PCs from an admin dashboard.
+CampusCare provides a teacher portal for reporting lab computer issues and an Express API backed by PostgreSQL. The current checked-in implementation contains the teacher portal and backend; Jira integration and the admin dashboard are planned member-owned components, not folders in this checkout.
 
-## Repository layout
+## Project folders
 
-| Folder | What it is | Owner |
-|---|---|---|
-| [`teacher-portal/`](teacher-portal/) | Teacher Portal frontend (React + Vite + Tailwind) | Member 1 |
-| `backend/` | Node.js + Express API, PostgreSQL, authentication | Member 2 |
-| `jira-integration/` | Jira Service Management setup and sync | Member 3 |
-| `admin-dashboard/` | Admin dashboard, PC inventory, QR generation | Member 4 |
+| Path | Purpose |
+|---|---|
+| `teacher-portal/` | React + Vite teacher portal |
+| `backend/` | Express API, PostgreSQL schema and seed data |
+| `docs/` | Setup, API, database and handover documentation |
 
-Folders other than `teacher-portal/` will be added by their owners. Each folder has its own README with setup steps.
+## Start locally
 
-## Architecture
+Open separate PowerShell terminals:
 
-```
-Teacher Portal / Admin Dashboard  →  Express backend  →  PostgreSQL
-                                                     →  Jira Service Management
-```
-
-The frontends talk only to the Express backend, never directly to the database or Jira.
-
-## Quick start (Teacher Portal)
-
-```bash
-cd teacher-portal
+```powershell
+cd .\backend
 npm install
-cp .env.example .env.local
 npm run dev
 ```
 
-See [`teacher-portal/README.md`](teacher-portal/README.md) for details.
+```powershell
+cd .\teacher-portal
+npm install
+npm run dev
+```
+
+The backend defaults to `http://localhost:5000`; the Vite frontend defaults to `http://localhost:5173`. Configure PostgreSQL and the frontend real API mode as described in [the project handover](docs/PROJECT_HANDOVER.md).
+
+## Documentation
+
+- [Project handover: setup, API, database and requirements checklist](docs/PROJECT_HANDOVER.md)
+- [Backend setup guide](docs/BACKEND_SETUP.md)
+- [API contract](docs/API_CONTRACT.md)
+- [Database schema](docs/DATABASE_SCHEMA.md)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
+- [Teacher portal guide](docs/TEACHER_PORTAL_README.md)
+- [Backend guide](docs/BACKEND_README.md)

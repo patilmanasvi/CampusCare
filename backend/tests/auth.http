@@ -1,0 +1,160 @@
+### ==============================================================================
+### CampusCare Backend - Phase 2 Authentication API Test Suite
+### Compatible with: VS Code REST Client Extension & Thunder Client
+### ==============================================================================
+
+@baseUrl = http://localhost:5000/api
+@authToken = {{loginTeacher.response.body.token}}
+
+### ------------------------------------------------------------------------------
+### 1. Health Check & Welcome Endpoints
+### ------------------------------------------------------------------------------
+
+# @name getApiRoot
+GET {{baseUrl}}/
+Content-Type: application/json
+
+###
+
+# @name getHealthStatus
+GET {{baseUrl}}/health
+Content-Type: application/json
+
+### ------------------------------------------------------------------------------
+### 2. Validation Failure Tests (POST /api/auth/login)
+### ------------------------------------------------------------------------------
+
+# @name testEmptyLogin
+# Expected: 400 Bad Request with VALIDATION_ERROR
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+}
+
+###
+
+# @name testInvalidEmailFormat
+# Expected: 400 Bad Request with invalid email message
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "password123"
+}
+
+###
+
+# @name testShortPassword
+# Expected: 400 Bad Request (password < 6 chars)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "teacher@college.edu",
+  "password": "123"
+}
+
+### ------------------------------------------------------------------------------
+### 3. Authentication & Security Tests (POST /api/auth/login)
+### ------------------------------------------------------------------------------
+
+# @name testIncorrectPassword
+# Expected: 401 Unauthorized with INVALID_CREDENTIALS
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "teacher@college.edu",
+  "password": "wrong_password_xyz"
+}
+
+###
+
+# @name testNonexistentUser
+# Expected: 401 Unauthorized with generic message
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "unknown.user@college.edu",
+  "password": "password123"
+}
+
+###
+
+# @name testPendingTeacherLogin
+# Expected: 403 Forbidden with ACCOUNT_PENDING
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "pending.teacher@college.edu",
+  "password": "password123"
+}
+
+###
+
+# @name loginTeacher
+# Expected: 200 OK with JWT token, safe user profile, teacher object, and Set-Cookie
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "teacher@college.edu",
+  "password": "password123"
+}
+
+###
+
+# @name loginAdmin
+# Expected: 200 OK with ADMIN user profile and token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@college.edu",
+  "password": "password123"
+}
+
+### ------------------------------------------------------------------------------
+### 4. Fetch Current User (GET /api/auth/me)
+### ------------------------------------------------------------------------------
+
+# @name testMeWithoutToken
+# Expected: 401 Unauthorized with AUTH_REQUIRED
+GET {{baseUrl}}/auth/me
+Content-Type: application/json
+
+###
+
+# @name testMeWithInvalidToken
+# Expected: 401 Unauthorized with INVALID_TOKEN
+GET {{baseUrl}}/auth/me
+Authorization: Bearer invalid_jwt_token_gibberish
+Content-Type: application/json
+
+###
+
+# @name testMeWithValidToken
+# Expected: 200 OK with authenticated user profile (uses token captured from loginTeacher)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+### ------------------------------------------------------------------------------
+### 5. Logout (POST /api/auth/logout)
+### ------------------------------------------------------------------------------
+
+# @name logoutUser
+# Expected: 200 OK and clears session cookie
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+
+###
+
+# @name testMeAfterLogout
+# Expected: 401 Unauthorized because session cookie is cleared
+GET {{baseUrl}}/auth/me
+Content-Type: application/json
