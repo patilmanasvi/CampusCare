@@ -351,6 +351,22 @@ const createTicket = async (payload, { idempotencyKey = null, user }) => {
  * Service: List tickets for the authenticated teacher
  */
 const listMyTickets = async ({ reporterId, status, urgency, categoryId, dateFrom, dateTo, search, sort, page, pageSize }) => {
+  // Synchronize active tickets from Jira when running live
+  if (process.env.NODE_ENV !== 'test') {
+    try {
+      const { jiraSyncService } = require('./jiraSyncService');
+      const { isJiraConfigured } = require('../config/jiraConfig');
+      if (isJiraConfigured()) {
+        await Promise.race([
+          jiraSyncService.syncInboundStatus(10),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Sync timeout')), 1500)),
+        ]);
+      }
+    } catch (syncErr) {
+      // Non-blocking fallback
+    }
+  }
+
   const result = await ticketRepository.findTickets({
     reporterId,
     status,
@@ -378,6 +394,21 @@ const listMyTickets = async ({ reporterId, status, urgency, categoryId, dateFrom
  * Service: Get single ticket details with authorization check
  */
 const getTicketById = async (ticketId, currentUserId, userRole) => {
+  if (process.env.NODE_ENV !== 'test') {
+    try {
+      const { jiraSyncService } = require('./jiraSyncService');
+      const { isJiraConfigured } = require('../config/jiraConfig');
+      if (isJiraConfigured()) {
+        await Promise.race([
+          jiraSyncService.syncInboundStatus(10),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Sync timeout')), 1500)),
+        ]);
+      }
+    } catch (syncErr) {
+      // Non-blocking fallback
+    }
+  }
+
   const ticket = await ticketRepository.findTicketById(ticketId);
 
   if (!ticket) {

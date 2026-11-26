@@ -352,7 +352,21 @@ class JiraSyncService {
             );
           }
         } catch (issueErr) {
-          // If a single issue cannot be fetched (e.g. deleted or permissions), continue with remaining
+          if (issueErr.statusCode === 404) {
+            // Issue was deleted in Jira Cloud; clean up local ticket
+            console.log(`[JiraSyncService] Issue ${ticket.jira_issue_key} was deleted in Jira; removing local ticket ${ticket.id}`);
+            try {
+              await db.query('DELETE FROM sync_events WHERE ticket_id = $1', [ticket.id]);
+              await db.query('DELETE FROM ticket_events WHERE ticket_id = $1', [ticket.id]);
+              await db.query('DELETE FROM ticket_comments WHERE ticket_id = $1', [ticket.id]);
+              await db.query('DELETE FROM ticket_information WHERE ticket_id = $1', [ticket.id]);
+              await db.query('DELETE FROM attachments WHERE ticket_id = $1', [ticket.id]);
+              await db.query('DELETE FROM tickets WHERE id = $1', [ticket.id]);
+              updatedCount++;
+            } catch (delErr) {
+              console.error(`[JiraSyncService] Failed to clean up deleted ticket ${ticket.id}:`, delErr.message);
+            }
+          }
         }
       }
 
