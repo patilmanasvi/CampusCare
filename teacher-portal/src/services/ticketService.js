@@ -11,7 +11,10 @@ import { normalizeTicket } from '../utils/backendUrl';
 const realTicketService = {
   /** params: { search, status, urgency, categoryId, dateFrom, dateTo, sort, page, pageSize } */
   async listMyTickets(params = {}) {
-    const { data } = await api.get(ENDPOINTS.tickets.list, { params });
+    const cleanParams = Object.fromEntries(
+      Object.entries(params).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+    );
+    const { data } = await api.get(ENDPOINTS.tickets.list, { params: cleanParams });
     return data; // { items, total, page, pageSize }
   },
   async getTicket(ticketId) {

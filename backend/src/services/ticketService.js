@@ -307,8 +307,9 @@ const createTicket = async (payload, { idempotencyKey = null, user }) => {
   );
 
   if (exactOpenDuplicate) {
+    const pcLabel = pc.display_code || pc.displayCode || pc.id;
     const error = new Error(
-      `You have already submitted an active request (${exactOpenDuplicate.id}) for this issue on PC ${pc.displayCode}.`
+      `You have already submitted an active request (${exactOpenDuplicate.id}) for this issue on PC ${pcLabel}.`
     );
     error.statusCode = 409;
     error.code = 'DUPLICATE_TICKET_EXISTS';

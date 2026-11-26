@@ -147,20 +147,56 @@ const duplicateCheckRules = [
 const ticketIdRules = [ticketIdParam];
 
 const listTicketRules = [
-  query('status').optional().isString().isLength({ max: 200 }).bail().custom((value) =>
-    String(value).split(',').every((status) => [
-      'SUBMITTED', 'ACKNOWLEDGED', 'IN_PROGRESS', 'WAITING_FOR_INFO', 'FIXED',
-      'AWAITING_VERIFICATION', 'CLOSED', 'REOPENED',
-    ].includes(status.trim().toUpperCase()))
-  ).withMessage('status contains an unsupported ticket status'),
-  query('urgency').optional().trim().toUpperCase().isIn(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
-  query('categoryId').optional().trim().isLength({ min: 2, max: 50 }),
-  query('dateFrom').optional().isISO8601().withMessage('dateFrom must be an ISO date'),
-  query('dateTo').optional().isISO8601().withMessage('dateTo must be an ISO date'),
-  query('search').optional().trim().isLength({ max: 200 }),
-  query('sort').optional().isIn(['newest', 'oldest']),
-  query('page').optional().toInt().isInt({ min: 1, max: 100000 }),
-  query('pageSize').optional().toInt().isInt({ min: 1, max: 100 }),
+  query('status')
+    .optional({ checkFalsy: true })
+    .isString()
+    .isLength({ max: 200 })
+    .bail()
+    .custom((value) =>
+      String(value).split(',').every((status) => [
+        'SUBMITTED', 'ACKNOWLEDGED', 'IN_PROGRESS', 'WAITING_FOR_INFO', 'FIXED',
+        'AWAITING_VERIFICATION', 'CLOSED', 'REOPENED',
+      ].includes(status.trim().toUpperCase()))
+    )
+    .withMessage('status contains an unsupported ticket status'),
+  query('urgency')
+    .optional({ checkFalsy: true })
+    .trim()
+    .toUpperCase()
+    .isIn(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'])
+    .withMessage('urgency must be one of: LOW, MEDIUM, HIGH, CRITICAL'),
+  query('categoryId')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('categoryId must be between 2 and 50 characters'),
+  query('dateFrom')
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .withMessage('dateFrom must be an ISO date'),
+  query('dateTo')
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .withMessage('dateTo must be an ISO date'),
+  query('search')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ max: 200 })
+    .withMessage('search must not exceed 200 characters'),
+  query('sort')
+    .optional({ checkFalsy: true })
+    .isIn(['newest', 'oldest'])
+    .withMessage('sort must be either newest or oldest'),
+  query('page')
+    .optional({ checkFalsy: true })
+    .toInt()
+    .isInt({ min: 1, max: 100000 })
+    .withMessage('page must be an integer between 1 and 100000'),
+  query('pageSize')
+    .optional({ checkFalsy: true })
+    .toInt()
+    .isInt({ min: 1, max: 100 })
+    .withMessage('pageSize must be an integer between 1 and 100'),
 ];
 
 const jiraSyncRules = [

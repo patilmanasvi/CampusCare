@@ -493,6 +493,39 @@ describe('CampusCare Phase 3 - Core APIs Integration Tests', () => {
       expect(res2.statusCode).toBe(201);
       expect(res2.body.ticket.id).toBe(ticketId);
     });
+
+    it('POST /api/tickets should include PC display_code (not undefined) in 409 DUPLICATE_TICKET_EXISTS message', async () => {
+      db.query.mockImplementation((text) => {
+        if (text.includes('FROM users u')) return Promise.resolve({ rowCount: 1, rows: [mockUserRow] });
+        if (text.includes('WHERE p.id = $1')) return Promise.resolve({ rowCount: 1, rows: [mockPcRow] });
+        if (text.includes('FROM ticket_categories')) return Promise.resolve({ rowCount: 1, rows: [{ id: 'cat-display', parent_id: null }] });
+        if (text.includes('WHERE t.pc_id = $1')) {
+          return Promise.resolve({
+            rowCount: 1,
+            rows: [{
+              id: 'LAB-1001',
+              reporter_id: mockUserRow.id,
+              description: 'Monitor flickers repeatedly',
+            }],
+          });
+        }
+        return Promise.resolve({ rowCount: 0, rows: [] });
+      });
+
+      const res = await request(app)
+        .post('/api/tickets')
+        .set('Authorization', `Bearer ${teacherToken}`)
+        .send({
+          pcId,
+          categoryId: 'cat-display',
+          description: 'Monitor flickers repeatedly',
+        });
+
+      expect(res.statusCode).toBe(409);
+      expect(res.body.code).toBe('DUPLICATE_TICKET_EXISTS');
+      expect(res.body.message).toContain(mockPcRow.display_code);
+      expect(res.body.message).not.toContain('undefined');
+    });
   });
 
   // ============================================================================
@@ -515,6 +548,45 @@ describe('CampusCare Phase 3 - Core APIs Integration Tests', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.items).toHaveLength(1);
       expect(res.body.items[0].id).toBe('LAB-1001');
+    });
+
+    it('GET /api/tickets/my should accept empty query filters without 400 validation error', async () => {
+      db.query.mockImplementation((text) => {
+        if (text.includes('FROM users u')) return Promise.resolve({ rowCount: 1, rows: [mockUserRow] });
+        if (text.includes('COUNT(*) AS total')) return Promise.resolve({ rowCount: 1, rows: [{ total: '1' }] });
+        if (text.includes('FROM tickets t')) return Promise.resolve({ rowCount: 1, rows: [mockTicketRow] });
+        return Promise.resolve({ rowCount: 0, rows: [] });
+      });
+
+      const res = await request(app)
+        .get('/api/tickets/my?search=&status=&urgency=&categoryId=&dateFrom=&dateTo=&sort=newest&page=1&pageSize=10')
+        .set('Authorization', `Bearer ${teacherToken}`);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.items).toHaveLength(1);
+    });
+
+    it('GET /api/tickets/my should still reject invalid non-empty filter values', async () => {
+      db.query.mockImplementation((text) => {
+        if (text.includes('FROM users u')) return Promise.resolve({ rowCount: 1, rows: [mockUserRow] });
+        return Promise.resolve({ rowCount: 0, rows: [] });
+      });
+
+      const res1 = await request(app)
+        .get('/api/tickets/my?status=INVALID_STATUS')
+        .set('Authorization', `Bearer ${teacherToken}`);
+      expect(res1.statusCode).toBe(400);
+
+      const res2 = await request(app)
+        .get('/api/tickets/my?dateFrom=invalid-date')
+        .set('Authorization', `Bearer ${teacherToken}`);
+      expect(res2.statusCode).toBe(400);
+
+      const res3 = await request(app)
+        .get('/api/tickets/my?urgency=EXTREME')
+        .set('Authorization', `Bearer ${teacherToken}`);
+      expect(res3.statusCode).toBe(400);
     });
 
     it('GET /api/tickets/:id should prevent unauthorized teacher access (403)', async () => {
